@@ -36,7 +36,7 @@ echo "Backup /Users"
 rsync -a --delete /Users $destdir
 
 echo "Backup /private"
-rsync -a --delete /private $destdir
+rsync -a --delete /private --exclude /private/var/vm $destdir
 
 echo "Backup /Applications"
 rsync -a --delete /Applications $destdir
