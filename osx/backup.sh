@@ -16,11 +16,13 @@ output_error() {
 
 if [ $novirtualmachine == "no" ]; then
     echo "Checking virtual machine is not running..."
-    if [ `/Applications/VirtualBox.app/Contents/MacOS/VBoxManage list runningvms | wc -l` -ne 0 ]; then
+    if [ `sudo -u $SUDO_USER /Applications/VirtualBox.app/Contents/MacOS/VBoxManage list runningvms | wc -l` -ne 0 ]; then
         output_error "Virtual machine is running. Please stop it."
         exit 1
     fi
 fi
+
+exit
 
 #------------------------------------------------------------
 destdir=/Volumes/Data/Backups/`hostname -s`
@@ -34,21 +36,21 @@ fi
 #------------------------------------------------------------
 echo "Checking privilege..."
 
-if [ `whoami` == "root" ]; then
-    output_error "Please run this command by your user account (not sudo)."
+if [ `whoami` != "root" ]; then
+    output_error "Please run this command by root (sudo)."
     exit 1
 fi
 
 #------------------------------------------------------------
 echo "Backup /Users"
 if [ $novirtualmachine == "yes" ]; then
-    sudo rsync -vv -a --delete --exclude VirtualMachine/ /Users $destdir
+    rsync -vv -a --delete --exclude VirtualMachine/ /Users $destdir
 else
-    sudo rsync -a --delete /Users $destdir
+    rsync -a --delete /Users $destdir
 fi
 
 echo "Backup /private"
-sudo rsync -a --delete /private --exclude /private/var/vm $destdir
+rsync -a --delete /private --exclude /private/var/vm $destdir
 
 echo "Backup /Applications"
-sudo rsync -a --delete /Applications $destdir
+rsync -a --delete /Applications $destdir
