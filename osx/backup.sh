@@ -22,8 +22,6 @@ if [ $novirtualmachine == "no" ]; then
     fi
 fi
 
-exit
-
 #------------------------------------------------------------
 destdir=/Volumes/Data/Backups/`hostname -s`
 echo "Checking destdir..."
