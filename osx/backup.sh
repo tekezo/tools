@@ -42,13 +42,10 @@ fi
 #------------------------------------------------------------
 echo "Backup /Users"
 if [ $novirtualmachine == "yes" ]; then
-    rsync -vv -a --delete --exclude VirtualMachine/ /Users $destdir
+    rsync -vv -a --delete --exclude 'VirtualBox VMs/' /Users $destdir
 else
     rsync -a --delete /Users $destdir
 fi
 
 echo "Backup /private"
 rsync -a --delete /private --exclude /private/var/vm $destdir
-
-echo "Backup /Applications"
-rsync -a --delete /Applications $destdir
