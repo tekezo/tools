@@ -16,36 +16,32 @@ output_error() {
 
 if [ $novirtualmachine == "no" ]; then
     echo "Checking virtual machine is not running..."
-    if [ `sudo -u $SUDO_USER /Applications/VirtualBox.app/Contents/MacOS/VBoxManage list runningvms | wc -l` -ne 0 ]; then
+    if [ `/Applications/VirtualBox.app/Contents/MacOS/VBoxManage list runningvms | wc -l` -ne 0 ]; then
         output_error "Virtual machine is running. Please stop it."
         exit 1
     fi
 fi
 
 #------------------------------------------------------------
-destdir=/Volumes/Data/Backups/`hostname -s`
-echo "Checking destdir..."
+destdir=mini2016.local:/Backups/`hostname -s`
 
-if [ ! -d $destdir ]; then
-    output_error "Destdir is not exists. Please mkdir $destdir"
-    exit 1
-fi
+whoami=`whoami`
 
-#------------------------------------------------------------
-echo "Checking privilege..."
+exclude=""
+exclude="$exclude --exclude='/$whoami/.Trash/'"
+exclude="$exclude --exclude='/$whoami/.cocoapods/'"
+exclude="$exclude --exclude='/$whoami/Dropbox/'"
+exclude="$exclude --exclude='/$whoami/Library/Android/sdk/'"
+exclude="$exclude --exclude='/$whoami/Library/Application Support/MobileSync/Backup/'"
+exclude="$exclude --exclude='/$whoami/Library/Caches/'"
+exclude="$exclude --exclude='/$whoami/Library/Containers/'"
+exclude="$exclude --exclude='/$whoami/Library/Developer/CoreSimulator/Devices/'"
+exclude="$exclude --exclude='/$whoami/Library/Developer/Xcode/DerivedData/'"
+exclude="$exclude --exclude='/$whoami/Library/Developer/Xcode/iOS DeviceSupport/'"
 
-if [ `whoami` != "root" ]; then
-    output_error "Please run this command by root (sudo)."
-    exit 1
-fi
-
-#------------------------------------------------------------
-echo "Backup /Users"
 if [ $novirtualmachine == "yes" ]; then
-    rsync -vv -a --delete --exclude 'VirtualBox VMs/' /Users $destdir
-else
-    rsync -a --delete /Users $destdir
+    exclude="$exclude --exclude '/$whoami/VirtualBox VMs/'"
 fi
 
-echo "Backup /private"
-rsync -a --delete /private --exclude /private/var/vm $destdir
+echo "Backup /Users"
+sh -c "rsync -vv -ax --delete $exclude /Users/$whoami '$destdir/Users'"
