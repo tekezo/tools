@@ -38,6 +38,8 @@ exclude="$exclude --exclude='/$whoami/Library/Containers/'"
 exclude="$exclude --exclude='/$whoami/Library/Developer/CoreSimulator/Devices/'"
 exclude="$exclude --exclude='/$whoami/Library/Developer/Xcode/DerivedData/'"
 exclude="$exclude --exclude='/$whoami/Library/Developer/Xcode/iOS DeviceSupport/'"
+exclude="$exclude --exclude='/$whoami/Library/Logs/'"
+exclude="$exclude --exclude='/$whoami/Library/Saved Application State/'"
 
 if [ $novirtualmachine == "yes" ]; then
     exclude="$exclude --exclude '/$whoami/VirtualBox VMs/'"
